@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({MybatisConfig.class,JDBCConfig.class})
-@ComponentScan({"com.xvchushun.dao","com.xvchushun.service","com.xvchushun.controller"})
+@ComponentScan({"com.xvchushun.dao","com.xvchushun.service","com.xvchushun.controller","com.xvchushun.aop"})
 public class SpringConfig {
 }

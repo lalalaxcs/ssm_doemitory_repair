@@ -12,6 +12,7 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public User userLogin(String account) {
+        System.out.println("调用了方法!");
         return loginMapper.userLogin(account);
     }
 }

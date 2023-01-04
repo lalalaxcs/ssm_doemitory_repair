@@ -41,7 +41,7 @@ public interface WorkerMapper {
      * @return {@link List}<{@link Repair}>
      */
     @Select("select repairId,building,room,state,student_id,goods from repair where worker_id = #{id}")
-    @Results({
+    @Results(id = "workerReaire",value = {
             @Result(property = "id",column = "repairId",id = true),
             @Result(property = "building",column = "building"),
             @Result(property = "room",column = "room"),
@@ -60,4 +60,32 @@ public interface WorkerMapper {
      */
     @Update("update repair set state = 2 where repairId = #{id}")
     public int finishRepair(int id);
+
+    /**
+     * 放弃维修单
+     *
+     * @param id 身份证件
+     * @return int
+     */
+    @Update("update repair set state = 0,worker_id = null where repairId = #{id}")
+    public int abandonRepairOrder(int id);
+
+    /**
+     * 查找所有未接受维修订单
+     *
+     * @return {@link List}<{@link Repair}>
+     */
+    @Select("select repairId,building,room,state,student_id,goods from repair where state = 0")
+    @ResultMap(value ="workerReaire" )
+    public List<Repair> findAllRepairOrdersWithoutAccept();
+
+    /**
+     * 接受维修订单
+     *
+     * @param wId w标识
+     * @param rId r编号
+     * @return int
+     */
+    @Update("update repair set state =1,worker_id = #{w_id} where repairId = #{r_id}")
+    public int acceptRepairOrder(@Param("w_id") int wId,@Param("r_id") int rId);
 }

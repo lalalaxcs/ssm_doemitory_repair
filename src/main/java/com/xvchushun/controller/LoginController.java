@@ -1,6 +1,7 @@
 package com.xvchushun.controller;
 
 import com.mysql.cj.xdevapi.JsonString;
+import com.xvchushun.domain.LogAopPointcut;
 import com.xvchushun.domain.User;
 import com.xvchushun.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
     @PostMapping("/login")
+    @LogAopPointcut(logModulename = "登录模块" , logDesc = "用户登录",logType = LogAopPointcut.log_Type.SELECT)
     public String loginController(@RequestParam(value = "accout")String account, @RequestParam(value = "password")String password, Model model){
         System.out.println(account);
         System.out.println(password);
@@ -33,17 +35,10 @@ public class LoginController {
         }else if(user.getType() == 3){
             model.addAttribute("user",user);
             return "user";
-        }else if(user.getType() ==1){
+        }else{
             model.addAttribute("user",user);
             return "worker";
-        }else {
-            return "suguan";
         }
-//        model.addAttribute("user", user);
-//        modelAndView.addObject("user",user);
-//        modelAndView.setViewName("admin");
-//        return "redirect:/pages/admin.jsp";
-//        return "admin";
     }
     @PostMapping("/hello")
     public void helloController(HttpServletResponse response){

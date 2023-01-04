@@ -31,4 +31,19 @@ public class WorkerServiceImpl implements WorkerService{
     public int finishRepair(int id) {
         return workerMapper.finishRepair(id);
     }
+
+    @Override
+    public int abandonRepairOrder(int id) {
+        return workerMapper.abandonRepairOrder(id);
+    }
+
+    @Override
+    public List<Repair> findAllRepairOrdersWithoutAccept() {
+        return workerMapper.findAllRepairOrdersWithoutAccept();
+    }
+
+    @Override
+    public int acceptRepairOrder(int wId, int rId) {
+        return workerMapper.acceptRepairOrder(wId,rId);
+    }
 }

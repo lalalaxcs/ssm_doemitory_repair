@@ -165,5 +165,153 @@
     }
     function abandon(id){
         console.log(id);
+        $.ajax({
+            url:"/worker/abandonRepairOrder",
+            type: "POST",
+            data: {
+                repairId:id,
+            },
+            success:function (){
+                $.ajax({
+                    url:"/worker/myRepair",
+                    data:{
+                        Account:username
+                    },
+                    type:"POST",
+                    success:function (result){
+                        $("#table1").empty();
+                        var repair_table =  $("<table border='0' align='center' style='border-spacing: 20px;color: white;text-align: center;background-color: gray'></table>");
+                        var repair_table_head = $("<tr style='background-color: gray;color:white;height: 70px;border-radius: 25px'><td>楼栋</td><td>房间</td><td>状态</td><td>报修学生</td><td>维修物品</td><td>操作</td></tr>");
+                        repair_table_head.appendTo(repair_table);
+                        $.each(result,function (index,item){
+                            var state1 = item.state;
+                            var neo;
+                            if(state1 === 0){
+                                neo = "未接单";
+                            }else if(state1 === 1){
+                                neo = "未完成";
+                            }else if(state1 ===2){
+                                neo = "已完成";
+                            }
+                            var finishbtn = $("<button style='background-color: greenyellow;border-radius: 5px;height: 35px;width: 80px;margin-left: 0px'>完成订单</button>");
+                            var abandonbtn = $("<button style='background-color: red;border-radius: 5px;height: 35px;width: 80px;margin-left: 0px'>放弃订单</button>");
+                            finishbtn.attr("onclick","finish("+item.id+")");
+                            abandonbtn.attr("onclick","abandon("+item.id+")");
+                            var IdTd = $("<td></td>").append(item.building);
+                            var roomTd = $("<td></td>").append(item.room);
+                            if(neo === "未完成"){
+                                var stateTd = $("<td style='color: yellow'></td>").append(neo);
+                            }else{
+                                var stateTd = $("<td style='color: greenyellow'></td>").append(neo);
+                            }
+
+                            var studentTd = $("<td></td>").append(item.student.name);
+                            var goodTd = $("<td></td>").append(item.goods);
+                            var btnId = $("<td style='width: 190px;text-align: left'></td>").append(finishbtn).append(abandonbtn);
+                            $("<tr style='font-size: 20px'></tr>").append(IdTd).append(roomTd).append(stateTd).append(studentTd).append(goodTd).append(btnId).appendTo(repair_table);
+                            repair_table.appendTo($("#table1"))
+                        })
+                    }
+                })
+            }
+        })
+    }
+    $("#torepaire").click(function (){
+        $.ajax({
+            url:"/worker/findAllRepairOrdersWithoutAccept",
+            data:{
+                Account:username
+            },
+            type:"POST",
+            success:function (result){
+                $("#table1").empty();
+                var repair_table =  $("<table border='0' align='center' style='border-spacing: 20px;color: white;text-align: center;background-color: gray'></table>");
+                var repair_table_head = $("<tr style='background-color: gray;color:white;height: 70px;border-radius: 25px'><td>楼栋</td><td>房间</td><td>状态</td><td>报修学生</td><td>维修物品</td><td>操作</td></tr>");
+                repair_table_head.appendTo(repair_table);
+                $.each(result,function (index,item){
+                    var state1 = item.state;
+                    var neo;
+                    if(state1 === 0){
+                        neo = "未接单";
+                    }else if(state1 === 1){
+                        neo = "未完成";
+                    }else if(state1 ===2){
+                        neo = "已完成";
+                    }
+                    var acceptbtn = $("<button style='background-color: greenyellow;border-radius: 5px;height: 35px;width: 80px;margin-left: 0px'>接受订单</button>");
+                    // var abandonbtn = $("<button style='background-color: red;border-radius: 5px;height: 35px;width: 80px;margin-left: 0px'>放弃订单</button>");
+                    // finishbtn.attr("onclick","finish("+item.id+")");
+                    // abandonbtn.attr("onclick","abandon("+item.id+")");
+                    acceptbtn.attr("onclick","accept("+item.id+")");
+                    var IdTd = $("<td></td>").append(item.building);
+                    var roomTd = $("<td></td>").append(item.room);
+                    if(neo === "未完成"){
+                        var stateTd = $("<td style='color: yellow'></td>").append(neo);
+                    }else{
+                        var stateTd = $("<td style='color: greenyellow'></td>").append(neo);
+                    }
+
+                    var studentTd = $("<td></td>").append(item.student.name);
+                    var goodTd = $("<td></td>").append(item.goods);
+                    var btnId = $("<td style='width: 190px;text-align: center'></td>").append(acceptbtn);
+                    $("<tr style='font-size: 20px'></tr>").append(IdTd).append(roomTd).append(stateTd).append(studentTd).append(goodTd).append(btnId).appendTo(repair_table);
+                    repair_table.appendTo($("#table1"))
+                })
+            }
+        })
+    })
+    function accept(id){
+        $.ajax({
+            url:"/worker/acceptRepairOrder",
+            type:"POST",
+            data:{
+                repairId:id,
+                Account:username
+            },
+            success:function (){
+                $.ajax({
+                    url:"/worker/findAllRepairOrdersWithoutAccept",
+                    data:{
+                        Account:username
+                    },
+                    type:"POST",
+                    success:function (result){
+                        $("#table1").empty();
+                        var repair_table =  $("<table border='0' align='center' style='border-spacing: 20px;color: white;text-align: center;background-color: gray'></table>");
+                        var repair_table_head = $("<tr style='background-color: gray;color:white;height: 70px;border-radius: 25px'><td>楼栋</td><td>房间</td><td>状态</td><td>报修学生</td><td>维修物品</td><td>操作</td></tr>");
+                        repair_table_head.appendTo(repair_table);
+                        $.each(result,function (index,item){
+                            var state1 = item.state;
+                            var neo;
+                            if(state1 === 0){
+                                neo = "未接单";
+                            }else if(state1 === 1){
+                                neo = "未完成";
+                            }else if(state1 ===2){
+                                neo = "已完成";
+                            }
+                            var acceptbtn = $("<button style='background-color: greenyellow;border-radius: 5px;height: 35px;width: 80px;margin-left: 0px'>接受订单</button>");
+                            // var abandonbtn = $("<button style='background-color: red;border-radius: 5px;height: 35px;width: 80px;margin-left: 0px'>放弃订单</button>");
+                            // finishbtn.attr("onclick","finish("+item.id+")");
+                            // abandonbtn.attr("onclick","abandon("+item.id+")");
+                            acceptbtn.attr("onclick","accept("+item.id+")");
+                            var IdTd = $("<td></td>").append(item.building);
+                            var roomTd = $("<td></td>").append(item.room);
+                            if(neo === "未完成"){
+                                var stateTd = $("<td style='color: yellow'></td>").append(neo);
+                            }else{
+                                var stateTd = $("<td style='color: greenyellow'></td>").append(neo);
+                            }
+
+                            var studentTd = $("<td></td>").append(item.student.name);
+                            var goodTd = $("<td></td>").append(item.goods);
+                            var btnId = $("<td style='width: 190px;text-align: center'></td>").append(acceptbtn);
+                            $("<tr style='font-size: 20px'></tr>").append(IdTd).append(roomTd).append(stateTd).append(studentTd).append(goodTd).append(btnId).appendTo(repair_table);
+                        })
+                        repair_table.appendTo($("#table1"))
+                    }
+                })
+            }
+        })
     }
 </script>
